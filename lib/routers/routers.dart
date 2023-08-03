@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/pages/sign.dart';
 import '../pages/login.dart';
 import '../pages/index.dart';
-import '../pages/sign.dart';
+// import '../pages/sign.dart';
 
 final routes = {
-  '/': (contxt) => LoginPage(),
+  '/': (contxt) => const LoginPage(),
   '/index': (contxt) => const IndexPage(),
-  '/sign': (contxt) => Sign(),
+  // '/': (contxt) => MyApp(),
 };
 var onGenerateRoute = (RouteSettings settings) {
 // 统一处理
