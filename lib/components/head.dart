@@ -15,8 +15,8 @@ class _HeadComponentState extends State<HeadComponent> {
         ClipOval(
           child: Image.asset(
             'static/img/logo.png',
-            width: 70,
-            height: 70,
+            width: 60,
+            height: 60,
             fit: BoxFit.cover,
           ),
         ),
@@ -27,7 +27,7 @@ class _HeadComponentState extends State<HeadComponent> {
             style: TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
-              fontSize: 32,
+              fontSize: 28,
             ),
           ),
         )

@@ -36,7 +36,7 @@ class FormItem extends StatelessWidget {
   const FormItem(
       {Key? key,
       this.width = 400,
-      this.labelWidth = 100,
+      this.labelWidth = 70,
       required this.label,
       this.size = Size.small,
       this.type = Type.text,
@@ -61,7 +61,8 @@ class FormItem extends StatelessWidget {
           Positioned(
               height: size == Size.mini ? 30 : 50,
               width: labelWidth,
-              child: Center(
+              child: Align(
+                alignment: Alignment.centerLeft,
                 child: Text(
                   label,
                   style: TextStyle(fontSize: size == Size.mini ? 14 : 18),

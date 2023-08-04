@@ -17,56 +17,66 @@ class _IndexPageState extends State<IndexPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const HeadComponent(),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
-                width: 200,
-                height: 200,
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        IconData(0xe679, fontFamily: 'iconfont'),
-                        size: 58,
-                        color: Colors.blue,
-                      ),
-                      Padding(padding: EdgeInsets.all(10)),
-                      Text(
-                        '访客登记',
-                        style: TextStyle(fontSize: 28, color: Colors.black),
-                      )
-                    ],
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/sign');
+                },
+                child: const SizedBox(
+                  width: 200,
+                  height: 200,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          IconData(0xe679, fontFamily: 'iconfont'),
+                          size: 58,
+                          color: Colors.blue,
+                        ),
+                        Padding(padding: EdgeInsets.all(10)),
+                        Text(
+                          '访客登记',
+                          style: TextStyle(fontSize: 28, color: Colors.black),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
-              Padding(padding: EdgeInsets.all(20)),
-              SizedBox(
-                width: 200,
-                height: 200,
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        IconData(0xe89b, fontFamily: 'iconfont'),
-                        size: 58,
-                        color: Colors.blue,
-                      ),
-                      Padding(padding: EdgeInsets.all(10)),
-                      Text(
-                        '来访记录',
-                        style: TextStyle(fontSize: 28, color: Colors.black),
-                      )
-                    ],
+              const Padding(padding: EdgeInsets.all(20)),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/sign');
+                },
+                child: const SizedBox(
+                  width: 200,
+                  height: 200,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          IconData(0xe89b, fontFamily: 'iconfont'),
+                          size: 58,
+                          color: Colors.blue,
+                        ),
+                        Padding(padding: EdgeInsets.all(10)),
+                        Text(
+                          '来访记录',
+                          style: TextStyle(fontSize: 28, color: Colors.black),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
+              )
             ],
           ),
           Container(
