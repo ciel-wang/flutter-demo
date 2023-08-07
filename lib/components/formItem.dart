@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
-enum Size {
+enum InputSize {
   small,
   mini,
 }
 
-enum Type { text, password, select, date, time, datetime }
+enum InputType { text, password, select, date, time, datetime }
 
-const Map<Type, Widget> suffixIconType = {
-  Type.password: Icon(Icons.remove_red_eye),
-  Type.select: Icon(Icons.keyboard_arrow_down)
+const Map<InputType, Widget> suffixIconType = {
+  InputType.password: Icon(Icons.remove_red_eye),
+  InputType.select: Icon(Icons.keyboard_arrow_down)
 };
-const Map<Type, Widget> prefixIconType = {
-  Type.date: Icon(Icons.date_range_outlined),
-  Type.time: Icon(Icons.date_range_outlined),
-  Type.datetime: Icon(Icons.date_range_outlined)
+const Map<InputType, Widget> prefixIconType = {
+  InputType.date: Icon(Icons.date_range_outlined),
+  InputType.time: Icon(Icons.date_range_outlined),
+  InputType.datetime: Icon(Icons.date_range_outlined)
 };
 
 class FormItem extends StatelessWidget {
@@ -22,8 +22,8 @@ class FormItem extends StatelessWidget {
   final String label;
   final String? hintText;
   final double width;
-  final Size size;
-  final Type type;
+  final InputSize size;
+  final InputType type;
   final List<Map>? dicData;
   final bool readOnly;
   final bool enabled;
@@ -38,8 +38,8 @@ class FormItem extends StatelessWidget {
       this.width = 400,
       this.labelWidth = 70,
       required this.label,
-      this.size = Size.small,
-      this.type = Type.text,
+      this.size = InputSize.small,
+      this.type = InputType.text,
       this.readOnly = false,
       this.enabled = true,
       this.maxLength,
@@ -55,30 +55,30 @@ class FormItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: width,
-      height: size == Size.mini ? 60 : 80,
+      height: size == InputSize.mini ? 60 : 80,
       child: Stack(
         children: [
           Positioned(
-              height: size == Size.mini ? 30 : 50,
+              height: size == InputSize.mini ? 30 : 50,
               width: labelWidth,
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   label,
-                  style: TextStyle(fontSize: size == Size.mini ? 14 : 18),
+                  style: TextStyle(fontSize: size == InputSize.mini ? 14 : 18),
                 ),
               )),
           Positioned(
               left: labelWidth,
-              height: size == Size.mini ? 60 : 80,
+              height: size == InputSize.mini ? 60 : 80,
               width: width - labelWidth - 10,
-              child: type == Type.select
+              child: type == InputType.select
                   ? DropdownButtonFormField(
                       elevation: 0,
                       decoration: InputDecoration(
                           isCollapsed: true,
                           contentPadding:
-                              EdgeInsets.all(size == Size.mini ? 10 : 20),
+                              EdgeInsets.all(size == InputSize.mini ? 10 : 20),
                           hintText: hintText ?? '请选择 $label',
                           border: const OutlineInputBorder()),
                       items: dicData?.map((map) {
@@ -91,14 +91,16 @@ class FormItem extends StatelessWidget {
                       onChanged: onChanged)
                   : TextFormField(
                       textAlignVertical: TextAlignVertical.center,
-                      obscureText: type == Type.password,
-                      style: TextStyle(fontSize: size == Size.mini ? 14 : 16),
+                      obscureText: type == InputType.password,
+                      style:
+                          TextStyle(fontSize: size == InputSize.mini ? 14 : 16),
                       decoration: InputDecoration(
                           isCollapsed: true,
                           contentPadding:
-                              EdgeInsets.all(size == Size.mini ? 10 : 20),
+                              EdgeInsets.all(size == InputSize.mini ? 10 : 20),
                           hintText: hintText ??
-                              (type == Type.text || type == Type.password
+                              (type == InputType.text ||
+                                      type == InputType.password
                                   ? '请输入 $label'
                                   : '请选择$label'),
                           suffixIcon: suffixIconType[type],

@@ -3,6 +3,7 @@ import '../components/customBackground.dart';
 import '../components/head.dart';
 import '../components/formItem.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
+import '../components/customBtn.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -75,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                       FormItem(
                         label: '密码',
                         width: size.width / 2,
-                        type: Type.password,
+                        type: InputType.password,
                         validator: (value) {
                           if (value == null || value.isEmpty) return '请输入密码';
                           return null;
@@ -106,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                       FormItem(
                           label: '选择框',
                           width: size.width / 2,
-                          type: Type.select,
+                          type: InputType.select,
                           dicData: list,
                           validator: (value) {
                             if (value == null) return '请选择';
@@ -119,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                       FormItem(
                         label: '日期',
                         width: size.width / 2,
-                        type: Type.date,
+                        type: InputType.date,
                         readOnly: true,
                         validator: (value) {
                           if (value == null || value.isEmpty) return '请选择日期';
@@ -135,16 +136,17 @@ class _LoginPageState extends State<LoginPage> {
                       )
                     ],
                     Padding(
-                      padding: const EdgeInsets.all(30),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (formKey.currentState?.validate() ?? false) {
-                            Navigator.pushNamed(context, '/index');
-                          }
-                        },
-                        child: Text(_isLoginForm ? '提交' : '保存'),
-                      ),
-                    )
+                        padding: const EdgeInsets.all(30),
+                        child: CustomBtn(
+                          child: Text(_isLoginForm ? '提交' : '保存',
+                              style: const TextStyle(
+                                  fontSize: 28, color: Colors.white)),
+                          onPressed: () {
+                            if (formKey.currentState?.validate() ?? false) {
+                              Navigator.pushNamed(context, '/index');
+                            }
+                          },
+                        ))
                   ])))
         ]));
   }
