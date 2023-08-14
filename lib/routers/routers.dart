@@ -3,9 +3,10 @@ import '../pages/login.dart';
 import '../pages/index.dart';
 import '../pages/sign.dart';
 import '../pages/recordes.dart';
+import '../pages/test.dart';
 
 final routes = {
-  '/': (contxt) => const SignPage(),
+  '/': (contxt) => const CameraExampleHome(),
   '/login': (contxt) => const LoginPage(),
   '/index': (contxt) => const IndexPage(),
   '/sign': (contxt) => const SignPage(),
