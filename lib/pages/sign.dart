@@ -162,10 +162,10 @@ class _SignPageState extends State<SignPage> {
                                                     return null;
                                                   },
                                                 ),
-                                                const FormItem(
+                                                FormItem(
                                                     label: '携带物品',
                                                     size: InputSize.mini),
-                                                const FormItem(
+                                                FormItem(
                                                     label: '车牌号',
                                                     size: InputSize.mini),
                                                 FormItem(
@@ -346,18 +346,22 @@ class _SignPageState extends State<SignPage> {
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
             CustomBtn(
-              child: const Text('primary',style: TextStyle(fontSize: 28,color: Colors.white)),
+              child: const Text('primary',
+                  style: TextStyle(fontSize: 28, color: Colors.white)),
               onPressed: () {},
             ),
             CustomBtn(
               type: ColorType.warning,
               onPressed: () {},
-              child: const Text('warning',style: TextStyle(fontSize: 28, color: Colors.white)),
+              child: const Text('warning',
+                  style: TextStyle(fontSize: 28, color: Colors.white)),
             ),
             CustomBtn(
               type: ColorType.info,
               onPressed: () {},
-              child: const Text('info',style: TextStyle(fontSize: 28,color: Color.fromRGBO(106, 176, 254, 1))),
+              child: const Text('info',
+                  style: TextStyle(
+                      fontSize: 28, color: Color.fromRGBO(106, 176, 254, 1))),
             )
           ]))
     ]));

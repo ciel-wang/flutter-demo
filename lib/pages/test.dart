@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
 import 'dart:async';
 import 'dart:io';
 
@@ -10,6 +6,32 @@ import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:video_player/video_player.dart';
+
+List<CameraDescription> _cameras = <CameraDescription>[];
+
+Future<void> main() async {
+  // Fetch the available cameras before initializing the app.
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
+    _cameras = await availableCameras();
+  } on CameraException catch (e) {
+    _logError(e.code, e.description);
+  }
+  runApp(const CameraApp());
+}
+
+/// CameraApp is the Main Application.
+class CameraApp extends StatelessWidget {
+  /// Default Constructor
+  const CameraApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: CameraExampleHome(),
+    );
+  }
+}
 
 /// Camera example home widget.
 class CameraExampleHome extends StatefulWidget {
@@ -43,6 +65,10 @@ void _logError(String code, String? message) {
   print('Error: $code${message == null ? '' : '\nError Message: $message'}');
 }
 
+/// 这是一个 Flutter StatefulWidget 组件的状态类 _CameraExampleHomeState 的定义。在这个状态类中使用了 with 关键字来混入了三个 mixin：WidgetsBindingObserver、TickerProviderStateMixin。
+/// WidgetsBindingObserver 是一个 Flutter 框架提供的观察者模式的接口，用于监听应用程序的生命周期事件，比如应用程序启动、暂停、恢复等。通过将 WidgetsBindingObserver 混入到状态类中，可以实现对这些生命周期事件的监听。
+/// TickerProviderStateMixin 是一个用于创建 AnimationController 实例的 mixin，它提供了创建动画控制器所需的 TickerProvider。TickerProvider 是一个抽象类，用于提供逐帧回调的 Ticker。通过将 TickerProviderStateMixin 混入到状态类中，我们就可以在该状态类中创建动画控制器，并且通过 vsync 参数提供给动画控制器。
+/// 综上所述，在 _CameraExampleHomeState 中混入了 WidgetsBindingObserver 和 TickerProviderStateMixin 这两个 mixin，以便实现对应用程序生命周期事件的监听和创建动画控制器所需的 TickerProvider。
 class _CameraExampleHomeState extends State<CameraExampleHome>
     with WidgetsBindingObserver, TickerProviderStateMixin {
   CameraController? controller;
@@ -65,7 +91,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   double _currentScale = 1.0;
   double _baseScale = 1.0;
 
-  // Counting pointers (number of user fingers on screen)
+  /// Counting pointers (number of user fingers on screen)
+  /// 计数指针(用户手指在屏幕上的数量)
   int _pointers = 0;
 
   @override
@@ -108,6 +135,13 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   }
 
   // #docregion AppLifecycle
+  /// didChangeAppLifecycleState 是 WidgetsBindingObserver 接口中的一个方法，用于处理应用程序的生命周期状态变化。
+  /// 当应用程序的生命周期状态发生变化时，例如从前台切换到后台或从后台切换到前台，Flutter 框架会调用 didChangeAppLifecycleState 方法，并传递一个AppLifecycleState 枚举值作为参数AppLifecycleState 枚举定义了以下四个生命周期状态：
+  /// resumed：应用程序位于前台并可响应用户输入。
+  /// inactive：应用程序处于非活动状态，无法响应用户输入。这可能是因为另一个应用程序处于活动状态，或者当前应用程序处于分屏模式下的非活动一侧。
+  /// paused：应用程序处于后台暂停状态，无法接收用户输入，并且没有焦点。
+  /// detached：应用程序已经被分离，无法渲染到屏幕上。这通常发生在 iOS 中，在此状态下，应用程序不再接收系统事件，并且无法重新附加到 Flutter 引擎。
+  /// 通过重写 didChangeAppLifecycleState 方法，您可以根据应用程序的生命周期状态来执行相应的操作，比如释放资源、暂停或恢复动画、保存用户数据等。
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final CameraController? cameraController = controller;
@@ -128,78 +162,61 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Camera example'),
-      ),
-      body: Column(
-        children: <Widget>[
+        appBar: AppBar(title: const Text('Camera example')),
+        body: Column(children: <Widget>[
           Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black,
-                border: Border.all(
-                  color:
-                      controller != null && controller!.value.isRecordingVideo
-                          ? Colors.redAccent
-                          : Colors.grey,
-                  width: 3.0,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(1.0),
-                child: Center(
-                  child: _cameraPreviewWidget(),
-                ),
-              ),
-            ),
-          ),
+              child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.black,
+                      border: Border.all(
+                          color: controller != null &&
+                                  controller!.value.isRecordingVideo
+                              ? Colors.redAccent
+                              : Colors.grey,
+                          width: 3.0)),
+                  child: Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      // 显示相机的预览(如果预览不可用，则显示消息)
+                      child: Center(child: _cameraPreviewWidget())))),
+          // 显示带有按钮的控制栏，用于拍照和录制视频
           _captureControlRowWidget(),
+          // 显示一个带有按钮的栏来改变闪光灯和曝光模式
           _modeControlRowWidget(),
           Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Row(
-              children: <Widget>[
+              padding: const EdgeInsets.all(5.0),
+              child: Row(children: <Widget>[
+                // 显示一行选择相机的按钮(如果没有可用的相机，则显示一条消息)。
                 _cameraTogglesRowWidget(),
+                // 显示捕获的图像或视频的缩略图。
                 _thumbnailWidget(),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+              ]))
+        ]));
   }
 
   /// Display the preview from the camera (or a message if the preview is not available).
+  /// 显示相机的预览(如果预览不可用，则显示消息)
   Widget _cameraPreviewWidget() {
     final CameraController? cameraController = controller;
 
     if (cameraController == null || !cameraController.value.isInitialized) {
-      return const Text(
-        'Tap a camera',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 24.0,
-          fontWeight: FontWeight.w900,
-        ),
-      );
+      return const Text('Tap a camera',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: 24.0,
+              fontWeight: FontWeight.w900));
     } else {
       return Listener(
-        onPointerDown: (_) => _pointers++,
-        onPointerUp: (_) => _pointers--,
-        child: CameraPreview(
-          controller!,
-          child: LayoutBuilder(
+          onPointerDown: (_) => _pointers++,
+          onPointerUp: (_) => _pointers--,
+          child: CameraPreview(controller!, child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
             return GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onScaleStart: _handleScaleStart,
-              onScaleUpdate: _handleScaleUpdate,
-              onTapDown: (TapDownDetails details) =>
-                  onViewFinderTap(details, constraints),
-            );
-          }),
-        ),
-      );
+                behavior: HitTestBehavior.opaque,
+                onScaleStart: _handleScaleStart,
+                onScaleUpdate: _handleScaleUpdate,
+                onTapDown: (TapDownDetails details) =>
+                    onViewFinderTap(details, constraints));
+          })));
     }
   }
 
@@ -209,6 +226,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
   Future<void> _handleScaleUpdate(ScaleUpdateDetails details) async {
     // When there are not exactly two fingers on screen don't scale
+    // 当屏幕上没有两个手指时，不要缩放
     if (controller == null || _pointers != 2) {
       return;
     }
@@ -220,98 +238,86 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   }
 
   /// Display the thumbnail of the captured image or video.
+  /// 显示捕获的图像或视频的缩略图。
   Widget _thumbnailWidget() {
     final VideoPlayerController? localVideoController = videoController;
 
     return Expanded(
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            if (localVideoController == null && imageFile == null)
-              Container()
-            else
-              SizedBox(
-                width: 64.0,
-                height: 64.0,
-                child: (localVideoController == null)
-                    ? (
-                        // The captured image on the web contains a network-accessible URL
-                        // pointing to a location within the browser. It may be displayed
-                        // either with Image.network or Image.memory after loading the image
-                        // bytes to memory.
-                        kIsWeb
-                            ? Image.network(imageFile!.path)
-                            : Image.file(File(imageFile!.path)))
-                    : Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.pink)),
-                        child: Center(
-                          child: AspectRatio(
-                              aspectRatio:
-                                  localVideoController.value.aspectRatio,
-                              child: VideoPlayer(localVideoController)),
-                        ),
-                      ),
-              ),
-          ],
-        ),
-      ),
-    );
+        child: Align(
+            alignment: Alignment.centerRight,
+            child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+              if (localVideoController == null && imageFile == null)
+                Container()
+              else
+                SizedBox(
+                    width: 64.0,
+                    height: 64.0,
+                    child: (localVideoController == null)
+                        ? (
+                            // The captured image on the web contains a network-accessible URL
+                            // pointing to a location within the browser. It may be displayed
+                            // either with Image.network or Image.memory after loading the image
+                            // bytes to memory.
+                            kIsWeb
+                                ? Image.network(imageFile!.path)
+                                : Image.file(File(imageFile!.path)))
+                        : Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.pink)),
+                            child: Center(
+                                child: AspectRatio(
+                                    aspectRatio:
+                                        localVideoController.value.aspectRatio,
+                                    child: VideoPlayer(localVideoController)))))
+            ])));
   }
 
   /// Display a bar with buttons to change the flash and exposure modes
+  /// 显示一个带有按钮的栏来改变闪光灯和曝光模式
   Widget _modeControlRowWidget() {
-    return Column(
-      children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.flash_on),
-              color: Colors.blue,
-              onPressed: controller != null ? onFlashModeButtonPressed : null,
-            ),
-            // The exposure and focus mode are currently not supported on the web.
-            ...!kIsWeb
-                ? <Widget>[
-                    IconButton(
-                      icon: const Icon(Icons.exposure),
-                      color: Colors.blue,
-                      onPressed: controller != null
-                          ? onExposureModeButtonPressed
-                          : null,
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.filter_center_focus),
-                      color: Colors.blue,
-                      onPressed:
-                          controller != null ? onFocusModeButtonPressed : null,
-                    )
-                  ]
-                : <Widget>[],
-            IconButton(
-              icon: Icon(enableAudio ? Icons.volume_up : Icons.volume_mute),
-              color: Colors.blue,
-              onPressed: controller != null ? onAudioModeButtonPressed : null,
-            ),
-            IconButton(
-              icon: Icon(controller?.value.isCaptureOrientationLocked ?? false
-                  ? Icons.screen_lock_rotation
-                  : Icons.screen_rotation),
-              color: Colors.blue,
-              onPressed: controller != null
-                  ? onCaptureOrientationLockButtonPressed
-                  : null,
-            ),
-          ],
+    return Column(children: <Widget>[
+      Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: <Widget>[
+        IconButton(
+          icon: const Icon(Icons.flash_on),
+          color: Colors.blue,
+          onPressed: controller != null ? onFlashModeButtonPressed : null,
         ),
-        _flashModeControlRowWidget(),
-        _exposureModeControlRowWidget(),
-        _focusModeControlRowWidget(),
-      ],
-    );
+        // The exposure and focus mode are currently not supported on the web.
+        // 目前网络上不支持曝光和对焦模式。
+        ...!kIsWeb
+            ? <Widget>[
+                IconButton(
+                  icon: const Icon(Icons.exposure),
+                  color: Colors.blue,
+                  onPressed:
+                      controller != null ? onExposureModeButtonPressed : null,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.filter_center_focus),
+                  color: Colors.blue,
+                  onPressed:
+                      controller != null ? onFocusModeButtonPressed : null,
+                )
+              ]
+            : <Widget>[],
+        IconButton(
+          icon: Icon(enableAudio ? Icons.volume_up : Icons.volume_mute),
+          color: Colors.blue,
+          onPressed: controller != null ? onAudioModeButtonPressed : null,
+        ),
+        IconButton(
+          icon: Icon(controller?.value.isCaptureOrientationLocked ?? false
+              ? Icons.screen_lock_rotation
+              : Icons.screen_rotation),
+          color: Colors.blue,
+          onPressed:
+              controller != null ? onCaptureOrientationLockButtonPressed : null,
+        )
+      ]),
+      _flashModeControlRowWidget(),
+      _exposureModeControlRowWidget(),
+      _focusModeControlRowWidget(),
+    ]);
   }
 
   Widget _flashModeControlRowWidget() {
@@ -501,67 +507,68 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   }
 
   /// Display the control bar with buttons to take pictures and record videos.
+  /// 显示带有按钮的控制栏，用于拍照和录制视频
   Widget _captureControlRowWidget() {
     final CameraController? cameraController = controller;
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        IconButton(
-          icon: const Icon(Icons.camera_alt),
-          color: Colors.blue,
-          onPressed: cameraController != null &&
-                  cameraController.value.isInitialized &&
-                  !cameraController.value.isRecordingVideo
-              ? onTakePictureButtonPressed
-              : null,
-        ),
-        IconButton(
-          icon: const Icon(Icons.videocam),
-          color: Colors.blue,
-          onPressed: cameraController != null &&
-                  cameraController.value.isInitialized &&
-                  !cameraController.value.isRecordingVideo
-              ? onVideoRecordButtonPressed
-              : null,
-        ),
-        IconButton(
-          icon: cameraController != null &&
-                  cameraController.value.isRecordingPaused
-              ? const Icon(Icons.play_arrow)
-              : const Icon(Icons.pause),
-          color: Colors.blue,
-          onPressed: cameraController != null &&
-                  cameraController.value.isInitialized &&
-                  cameraController.value.isRecordingVideo
-              ? (cameraController.value.isRecordingPaused)
-                  ? onResumeButtonPressed
-                  : onPauseButtonPressed
-              : null,
-        ),
-        IconButton(
-          icon: const Icon(Icons.stop),
-          color: Colors.red,
-          onPressed: cameraController != null &&
-                  cameraController.value.isInitialized &&
-                  cameraController.value.isRecordingVideo
-              ? onStopButtonPressed
-              : null,
-        ),
-        IconButton(
-          icon: const Icon(Icons.pause_presentation),
-          color:
-              cameraController != null && cameraController.value.isPreviewPaused
-                  ? Colors.red
-                  : Colors.blue,
-          onPressed:
-              cameraController == null ? null : onPausePreviewButtonPressed,
-        ),
-      ],
-    );
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.camera_alt),
+            color: Colors.blue,
+            onPressed: cameraController != null &&
+                    cameraController.value.isInitialized &&
+                    !cameraController.value.isRecordingVideo
+                ? onTakePictureButtonPressed
+                : null,
+          ),
+          IconButton(
+            icon: const Icon(Icons.videocam),
+            color: Colors.blue,
+            onPressed: cameraController != null &&
+                    cameraController.value.isInitialized &&
+                    !cameraController.value.isRecordingVideo
+                ? onVideoRecordButtonPressed
+                : null,
+          ),
+          IconButton(
+            icon: cameraController != null &&
+                    cameraController.value.isRecordingPaused
+                ? const Icon(Icons.play_arrow)
+                : const Icon(Icons.pause),
+            color: Colors.blue,
+            onPressed: cameraController != null &&
+                    cameraController.value.isInitialized &&
+                    cameraController.value.isRecordingVideo
+                ? (cameraController.value.isRecordingPaused)
+                    ? onResumeButtonPressed
+                    : onPauseButtonPressed
+                : null,
+          ),
+          IconButton(
+            icon: const Icon(Icons.stop),
+            color: Colors.red,
+            onPressed: cameraController != null &&
+                    cameraController.value.isInitialized &&
+                    cameraController.value.isRecordingVideo
+                ? onStopButtonPressed
+                : null,
+          ),
+          IconButton(
+            icon: const Icon(Icons.pause_presentation),
+            color: cameraController != null &&
+                    cameraController.value.isPreviewPaused
+                ? Colors.red
+                : Colors.blue,
+            onPressed:
+                cameraController == null ? null : onPausePreviewButtonPressed,
+          )
+        ]);
   }
 
   /// Display a row of toggle to select the camera (or a message if no camera is available).
+  /// 显示一行选择相机的按钮(如果没有可用的相机，则显示一条消息)
   Widget _cameraTogglesRowWidget() {
     final List<Widget> toggles = <Widget>[];
 
@@ -1040,30 +1047,4 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     _logError(e.code, e.description);
     showInSnackBar('Error: ${e.code}\n${e.description}');
   }
-}
-
-/// CameraApp is the Main Application.
-class CameraApp extends StatelessWidget {
-  /// Default Constructor
-  const CameraApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: CameraExampleHome(),
-    );
-  }
-}
-
-List<CameraDescription> _cameras = <CameraDescription>[];
-
-Future<void> main() async {
-  // Fetch the available cameras before initializing the app.
-  try {
-    WidgetsFlutterBinding.ensureInitialized();
-    _cameras = await availableCameras();
-  } on CameraException catch (e) {
-    _logError(e.code, e.description);
-  }
-  runApp(const CameraApp());
 }

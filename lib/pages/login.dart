@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import '../components/customBackground.dart';
 import '../components/head.dart';
 import '../components/formItem.dart';
-import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import '../components/customBtn.dart';
 
 class LoginPage extends StatefulWidget {
@@ -37,23 +37,15 @@ class _LoginPageState extends State<LoginPage> {
     final size = MediaQuery.of(context).size;
     return CustomBackground(
         floatingActionButton: Visibility(
-          visible: _isLoginForm,
-          child: GestureDetector(
-            child: const Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 30, 30),
-              child: Icon(
-                Icons.settings,
-                size: 30,
-                color: Color.fromRGBO(0, 0, 0, 0.5),
-              ),
-            ),
-            onTap: () {
-              setState(() {
-                _isLoginForm = !_isLoginForm;
-              });
-            },
-          ),
-        ),
+            visible: _isLoginForm,
+            child: GestureDetector(
+                child: const Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 30, 30),
+                    child: Icon(Icons.settings,
+                        size: 30, color: Color.fromRGBO(0, 0, 0, 0.5))),
+                onTap: () {
+                  setState(() => _isLoginForm = !_isLoginForm);
+                })),
         child: Column(children: [
           const HeadComponent(),
           const Padding(padding: EdgeInsets.only(top: 100)),
@@ -81,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                           if (value == null || value.isEmpty) return '请输入密码';
                           return null;
                         },
-                      )
+                      ),
                     ],
                     if (!_isLoginForm) ...[
                       FormItem(
@@ -98,6 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                       FormItem(
                         label: '端口号',
                         width: size.width / 2,
+                        type: InputType.number,
                         validator: (value) {
                           if (value == null || value.isEmpty) return '请输入端口号';
                           return null;
@@ -138,6 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                     Padding(
                         padding: const EdgeInsets.all(30),
                         child: CustomBtn(
+                          size: const Size(420, 80),
                           child: Text(_isLoginForm ? '提交' : '保存',
                               style: const TextStyle(
                                   fontSize: 28, color: Colors.white)),
