@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
+import 'package:flutter_demo/utils/sharedData.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 import '../components/customBackground.dart';
@@ -106,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                     if (!_isLoginForm) ...[
                       my.FormItem(
                           label: '服务器地址',
-                          name: 'server',
+                          name: 'serverIp',
                           width: size.width / 2,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -166,6 +167,10 @@ class _LoginPageState extends State<LoginPage> {
                                     fontSize: 28, color: Colors.white)),
                             onPressed: () {
                               if (_formKey.currentState?.validate() ?? false) {
+                                if (!_isLoginForm) {
+                                  SharedData.saveString(
+                                      SharedKey.passWord, 'value');
+                                } else {}
                                 debugPrint(_formKey.currentState?.instantValue
                                     .toString());
                                 // Navigator.pushNamed(context, '/index');
