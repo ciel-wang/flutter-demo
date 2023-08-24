@@ -23,7 +23,7 @@ class CustomRating extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(child: Stack(children: [initWidget(), getSelectWidget()]));
+    return Stack(children: [initWidget(), getSelectWidget()]);
   }
 
   Widget initWidget() {
