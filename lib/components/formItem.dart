@@ -57,6 +57,7 @@ class FormItem extends StatefulWidget {
       this.border = const OutlineInputBorder(),
       this.validator,
       this.onChanged,
+      this.valueTransformer,
       this.onTap,
       this.controller})
       : super(key: key) {
@@ -86,6 +87,7 @@ class FormItem extends StatefulWidget {
   final Color? inactiveThumbColor;
   final InputBorder? border;
   final dynamic Function(dynamic)? onChanged;
+  final dynamic Function(dynamic)? valueTransformer;
   final String? Function(dynamic)? validator;
   final void Function()? onTap;
   final TextEditingController? controller;
@@ -281,6 +283,8 @@ class _FormItemState extends State<FormItem> {
         initialValue: widget.initialValue,
         validator: widget.validator,
         onTap: widget.onTap,
+        valueTransformer: widget.valueTransformer,
+        onChanged: widget.onChanged,
         readOnly: widget.readOnly,
         enabled: widget.enabled,
         maxLength: widget.maxLength,
@@ -296,7 +300,8 @@ class _FormItemState extends State<FormItem> {
             .map((e) => FormBuilderFieldOption(
                 value: e['value'], child: Text(e['label'])))
             .toList(),
-        onChanged: widget.onChanged);
+        onChanged: widget.onChanged,
+        valueTransformer: widget.valueTransformer);
   }
 
   Widget switchForm() {
@@ -305,6 +310,7 @@ class _FormItemState extends State<FormItem> {
         child: FormBuilderSwitch(
             name: widget.name,
             decoration: InputDecoration(border: widget.border),
+            valueTransformer: widget.valueTransformer,
             // initialValue: widget.initialValue ?? false,
             activeColor: widget.activeColor,
             inactiveThumbColor: widget.inactiveThumbColor,

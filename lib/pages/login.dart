@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
+// import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:flutter_demo/utils/sharedData.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
@@ -23,20 +23,42 @@ class _LoginPageState extends State<LoginPage> {
     {'value': '3', 'label': '选项三'}
   ];
   bool _isLoginForm = true;
-  bool switchValue = false;
-  void _showDateTimePicker(DateTimePickerMode pickerMode) {
-    DatePicker.showDatePicker(
-      context,
-      locale: DateTimePickerLocale.zh_cn,
-      pickerMode: pickerMode, // show TimePicker
-      onConfirm: (dateTime, List<int> index) {
-        setState(() {
-          _formKey.currentState?.fields['date']?.didChange(
-              '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}');
-        });
-      },
-    );
+
+  Map<String, dynamic> form = {
+    'userName': '',
+    'passWord': '',
+    'isRememb': [false],
+    'serverIp': SharedData.getString(SharedKey.serverIp) ?? '',
+    'port': SharedData.getString(SharedKey.port) ?? '',
+    'enableAppointment':
+        SharedData.getBool(SharedKey.enableAppointment) ?? false,
+    'enableFace': SharedData.getBool(SharedKey.enableFace) ?? false,
+    'enableFaceVerify': SharedData.getBool(SharedKey.enableFaceVerify) ?? false
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    if (SharedData.getBool(SharedKey.isRememb) == true) {
+      form['userName'] = SharedData.getString(SharedKey.userName);
+      form['passWord'] = SharedData.getString(SharedKey.passWord);
+      form['isRememb'] = [true];
+    }
   }
+
+  // void _showDateTimePicker(DateTimePickerMode pickerMode) {
+  //   DatePicker.showDatePicker(
+  //     context,
+  //     locale: DateTimePickerLocale.zh_cn,
+  //     pickerMode: pickerMode, // show TimePicker
+  //     onConfirm: (dateTime, List<int> index) {
+  //       setState(() {
+  //         _formKey.currentState?.fields['date']?.didChange(
+  //             '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}');
+  //       });
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +81,11 @@ class _LoginPageState extends State<LoginPage> {
               width: size.width / 2,
               child: FormBuilder(
                   key: _formKey,
+                  initialValue: form,
                   child: Column(children: [
                     if (_isLoginForm) ...[
                       my.FormItem(
+                          key: const ValueKey('userName'),
                           label: '用户名',
                           name: 'userName',
                           width: size.width / 2,
@@ -71,6 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                           }),
                       const SizedBox(height: 10),
                       my.FormItem(
+                          key: const ValueKey('passWord'),
                           label: '密码',
                           name: 'passWord',
                           width: size.width / 2,
@@ -85,27 +110,17 @@ class _LoginPageState extends State<LoginPage> {
                           name: 'isRememb',
                           width: size.width / 2,
                           dicData: const [
-                            {'value': '1', 'label': '记住密码'}
+                            {'value': true, 'label': '记住密码'}
                           ],
                           border: InputBorder.none,
-                          type: my.WInputType.checkbox),
-                      my.FormItem(
-                          label: '选择框',
-                          name: 'select',
-                          width: size.width / 2,
-                          type: my.WInputType.select,
-                          dicData: list,
-                          multiple: true,
-                          validator: (value) {
-                            if (value == null) return '请选择';
-                            return null;
-                          },
-                          onChanged: (value) {
-                            return null;
+                          type: my.WInputType.checkbox,
+                          valueTransformer: (value) {
+                            return value is List ? value[0] : value;
                           }),
                     ],
                     if (!_isLoginForm) ...[
                       my.FormItem(
+                          key: const ValueKey('serverIp'),
                           label: '服务器地址',
                           name: 'serverIp',
                           width: size.width / 2,
@@ -117,6 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                           }),
                       const SizedBox(height: 10),
                       my.FormItem(
+                          key: const ValueKey('port'),
                           label: '端口号',
                           name: 'port',
                           width: size.width / 2,
@@ -144,19 +160,15 @@ class _LoginPageState extends State<LoginPage> {
                           width: size.width / 2,
                           border: InputBorder.none,
                           type: my.WInputType.switchs),
-                      my.FormItem(
-                          label: '日期',
-                          name: 'date',
-                          width: size.width / 2,
-                          type: my.WInputType.date,
-                          readOnly: true,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) return '请选择日期';
-                            return null;
-                          },
-                          onTap: () {
-                            _showDateTimePicker(DateTimePickerMode.date);
-                          })
+                      // my.FormItem(
+                      //     label: '日期',
+                      //     name: 'date',
+                      //     width: size.width / 2,
+                      //     type: my.WInputType.date,
+                      //     readOnly: true,
+                      //     onTap: () {
+                      //       _showDateTimePicker(DateTimePickerMode.date);
+                      //     })
                     ],
                     Padding(
                         padding: const EdgeInsets.all(30),
@@ -167,13 +179,44 @@ class _LoginPageState extends State<LoginPage> {
                                     fontSize: 28, color: Colors.white)),
                             onPressed: () {
                               if (_formKey.currentState?.validate() ?? false) {
+                                Map<String, dynamic> form =
+                                    _formKey.currentState!.instantValue;
                                 if (!_isLoginForm) {
                                   SharedData.saveString(
-                                      SharedKey.passWord, 'value');
-                                } else {}
-                                debugPrint(_formKey.currentState?.instantValue
-                                    .toString());
-                                // Navigator.pushNamed(context, '/index');
+                                      SharedKey.serverIp, form['serverIp']);
+                                  SharedData.saveString(
+                                      SharedKey.port, form['port']);
+                                  SharedData.saveBool(
+                                      SharedKey.enableAppointment,
+                                      form['enableAppointment'] ?? false);
+                                  SharedData.saveBool(SharedKey.enableFace,
+                                      form['enableFace'] ?? false);
+                                  SharedData.saveBool(
+                                      SharedKey.enableFaceVerify,
+                                      form['enableFaceVerify'] ?? false);
+                                  setState(() {
+                                    _isLoginForm = !_isLoginForm;
+                                  });
+                                } else {
+                                  if (!form.containsKey('serverIp') ||
+                                      form['serverIp'] == null) {
+                                    setState(() {
+                                      _isLoginForm = !_isLoginForm;
+                                    });
+                                  } else {
+                                    if (form.containsKey('isRememb') &&
+                                        form['isRememb']) {
+                                      SharedData.saveString(
+                                          SharedKey.userName, form['userName']);
+                                      SharedData.saveString(
+                                          SharedKey.passWord, form['passWord']);
+                                      SharedData.saveBool(SharedKey.isRememb,
+                                          form['isRememb'] ?? false);
+                                    }
+                                    // Navigator.pushNamed(context, '/index');
+                                  }
+                                }
+                                debugPrint(form.toString());
                               }
                             }))
                   ])))

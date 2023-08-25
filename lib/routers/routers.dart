@@ -7,7 +7,7 @@ import '../pages/face.dart';
 // import '../pages/test.dart';
 
 final routes = {
-  '/': (contxt) => const SignPage(),
+  '/': (contxt) => const LoginPage(),
   '/login': (contxt) => const LoginPage(),
   '/index': (contxt) => const IndexPage(),
   '/sign': (contxt) => const SignPage(),
