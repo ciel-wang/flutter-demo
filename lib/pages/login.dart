@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:flutter_demo/utils/sharedData.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-
 import '../components/customBackground.dart';
 import '../components/head.dart';
 import '../components/formItem.dart' as my;
 import '../components/customBtn.dart';
+import '../utils/http.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -27,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
   Map<String, dynamic> form = {
     'userName': '',
     'passWord': '',
-    'isRememb': [false],
+    'isRememb': [],
     'serverIp': SharedData.getString(SharedKey.serverIp) ?? '',
     'port': SharedData.getString(SharedKey.port) ?? '',
     'enableAppointment':
@@ -35,7 +35,6 @@ class _LoginPageState extends State<LoginPage> {
     'enableFace': SharedData.getBool(SharedKey.enableFace) ?? false,
     'enableFaceVerify': SharedData.getBool(SharedKey.enableFaceVerify) ?? false
   };
-
   @override
   void initState() {
     super.initState();
@@ -46,6 +45,15 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  void loginSubmit() async {
+    HttpUtil().post('/api/visit/login', data: {
+      'userName': 'admin',
+      'password': 'qazwsx',
+      'companyCode': '000000'
+    }).then((res) {
+      print(res.toString());
+    });
+  }
   // void _showDateTimePicker(DateTimePickerMode pickerMode) {
   //   DatePicker.showDatePicker(
   //     context,
@@ -115,7 +123,11 @@ class _LoginPageState extends State<LoginPage> {
                           border: InputBorder.none,
                           type: my.WInputType.checkbox,
                           valueTransformer: (value) {
-                            return value is List ? value[0] : value;
+                            return value is List
+                                ? value.isNotEmpty
+                                    ? value[0]
+                                    : false
+                                : value;
                           }),
                     ],
                     if (!_isLoginForm) ...[
@@ -178,9 +190,11 @@ class _LoginPageState extends State<LoginPage> {
                                 style: const TextStyle(
                                     fontSize: 28, color: Colors.white)),
                             onPressed: () {
-                              if (_formKey.currentState?.validate() ?? false) {
-                                Map<String, dynamic> form =
-                                    _formKey.currentState!.instantValue;
+                              if (_formKey.currentState?.saveAndValidate() ??
+                                  false) {
+                                Map<String, dynamic> newForm =
+                                    _formKey.currentState!.value;
+                                form.addAll(newForm);
                                 if (!_isLoginForm) {
                                   SharedData.saveString(
                                       SharedKey.serverIp, form['serverIp']);
@@ -212,11 +226,13 @@ class _LoginPageState extends State<LoginPage> {
                                           SharedKey.passWord, form['passWord']);
                                       SharedData.saveBool(SharedKey.isRememb,
                                           form['isRememb'] ?? false);
+                                    } else {
+                                      SharedData.removeKey(SharedKey.isRememb);
                                     }
+                                    // loginSubmit();
                                     // Navigator.pushNamed(context, '/index');
                                   }
                                 }
-                                debugPrint(form.toString());
                               }
                             }))
                   ])))
