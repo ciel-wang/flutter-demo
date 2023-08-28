@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../components/customBackground.dart';
+import '../components/custom_background.dart';
 import '../components/head.dart';
 
 class IndexPage extends StatefulWidget {

@@ -1,16 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 class HttpUtil {
-  static late HttpUtil instance;
+  static HttpUtil instance = HttpUtil();
   static late Dio dio;
   static late BaseOptions options;
 
   CancelToken cancelToken = CancelToken();
-
-  static HttpUtil getInstance() {
-    if (null == instance) instance = HttpUtil();
-    return instance;
-  }
 
   /*
    * config it and create
@@ -92,7 +88,9 @@ class HttpUtil {
       response = await dio.download(urlPath, savePath,
           onReceiveProgress: (int count, int total) {
         //进度
-        print("$count $total");
+        if (kDebugMode) {
+          print("$count $total");
+        }
       });
     } on DioException catch (e) {
       formatError(e);
@@ -105,17 +103,29 @@ class HttpUtil {
    */
   void formatError(DioException e) {
     if (e.type == DioExceptionType.connectionTimeout) {
-      print("连接超时");
+      if (kDebugMode) {
+        print("连接超时");
+      }
     } else if (e.type == DioExceptionType.sendTimeout) {
-      print("请求超时");
+      if (kDebugMode) {
+        print("请求超时");
+      }
     } else if (e.type == DioExceptionType.receiveTimeout) {
-      print("响应超时");
+      if (kDebugMode) {
+        print("响应超时");
+      }
     } else if (e.type == DioExceptionType.badResponse) {
-      print("出现异常");
+      if (kDebugMode) {
+        print("出现异常");
+      }
     } else if (e.type == DioExceptionType.cancel) {
-      print("请求取消");
+      if (kDebugMode) {
+        print("请求取消");
+      }
     } else {
-      print("未知错误");
+      if (kDebugMode) {
+        print("未知错误");
+      }
     }
   }
 

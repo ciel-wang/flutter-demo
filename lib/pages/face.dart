@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import '../components/customBackground.dart';
-import '../components/customBtn.dart';
+import '../components/custom_background.dart';
+import '../components/custom_btn.dart';
 
 class Face extends StatefulWidget {
   const Face({super.key});

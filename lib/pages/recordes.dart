@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../components/customBackground.dart';
+import '../components/custom_background.dart';
 import '../components/head.dart';
-import '../components/customSearch.dart';
-import '../components/dottedLinePainter.dart';
-import '../components/customBtn.dart';
+import '../components/custom_search.dart';
+import '../components/dottedline_painter.dart';
+import '../components/custom_btn.dart';
 
 class RecordesPage extends StatefulWidget {
   const RecordesPage({super.key});

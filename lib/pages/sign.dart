@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import '../components/customBackground.dart';
+import '../components/custom_background.dart';
 import '../components/head.dart';
-import '../components/formItem.dart';
-import '../components/customBtn.dart';
+import '../components/form_item.dart';
+import '../components/custom_btn.dart';
 
 class SignPage extends StatefulWidget {
   const SignPage({super.key});

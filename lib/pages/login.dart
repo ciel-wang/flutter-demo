@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 // import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
-import 'package:flutter_demo/utils/sharedData.dart';
+import 'package:flutter_demo/utils/shared_data.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import '../components/customBackground.dart';
+import '../components/custom_background.dart';
 import '../components/head.dart';
-import '../components/formItem.dart' as my;
-import '../components/customBtn.dart';
+import '../components/form_item.dart' as my;
+import '../components/custom_btn.dart';
 import '../utils/http.dart';
 
 class LoginPage extends StatefulWidget {
@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
       'password': 'qazwsx',
       'companyCode': '000000'
     }).then((res) {
-      print(res.toString());
+      // print(res.toString());
     });
   }
   // void _showDateTimePicker(DateTimePickerMode pickerMode) {
