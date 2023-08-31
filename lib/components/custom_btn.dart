@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 enum ColorType { primary, sucess, warning, info }
 
@@ -63,8 +64,8 @@ class CustomBtn extends StatelessWidget {
         onTap: onPressed,
         child: Container(
           decoration: decoration,
-          width: size.width,
-          height: size.height,
+          width: size.width.w,
+          height: size.height.w,
           alignment: Alignment.center,
           child: child,
         ));

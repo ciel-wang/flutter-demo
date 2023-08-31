@@ -11,6 +11,7 @@ enum SharedKey {
   enableFace, // 是否启用人证对比
   enableFaceVerify, // 是否启用人脸验证
   token, // token
+  devSn
 }
 
 extension SharedKeyExtension on SharedKey {
@@ -34,6 +35,8 @@ extension SharedKeyExtension on SharedKey {
         return 'enableFaceVerify';
       case SharedKey.token:
         return 'token';
+      case SharedKey.devSn:
+        return 'devSn';
       default:
         throw Exception('Invalid key');
     }
@@ -50,6 +53,7 @@ extension SharedKeyExtension on SharedKey {
       SharedKey.enableFace.value,
       SharedKey.enableFaceVerify.value,
       SharedKey.token.value,
+      SharedKey.devSn.value
     ];
   }
 }

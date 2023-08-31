@@ -14,8 +14,16 @@ class SignPage extends StatefulWidget {
 
 class _SignPageState extends State<SignPage> {
   final _formKey = GlobalKey<FormBuilderState>();
-
   String imgUrl = "";
+
+  @override
+  void initState() {
+    super.initState();
+    // if (imgUrl.isEmpty) {
+    //   Navigator.pushNamed(context, '/face');
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomBackground(
@@ -67,23 +75,23 @@ class _SignPageState extends State<SignPage> {
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
             CustomBtn(
-              child: const Text('primary',
-                  style: TextStyle(fontSize: 28, color: Colors.white)),
-              onPressed: () {},
-            ),
+                type: ColorType.info,
+                onPressed: () {},
+                child: const Text('返回首页',
+                    style: TextStyle(
+                        fontSize: 28,
+                        color: Color.fromRGBO(106, 176, 254, 1)))),
             CustomBtn(
-              type: ColorType.warning,
-              onPressed: () {},
-              child: const Text('warning',
-                  style: TextStyle(fontSize: 28, color: Colors.white)),
-            ),
+                child: const Text('访客登记',
+                    style: TextStyle(fontSize: 28, color: Colors.white)),
+                onPressed: () {
+                  if (_formKey.currentState?.saveAndValidate() ?? false) {}
+                }),
             CustomBtn(
-              type: ColorType.info,
-              onPressed: () {},
-              child: const Text('info',
-                  style: TextStyle(
-                      fontSize: 28, color: Color.fromRGBO(106, 176, 254, 1))),
-            )
+                type: ColorType.warning,
+                onPressed: () {},
+                child: const Text('访客签离',
+                    style: TextStyle(fontSize: 28, color: Colors.white)))
           ]))
     ]));
   }

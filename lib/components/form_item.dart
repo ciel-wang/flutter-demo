@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 enum WInputSize {
   small,
@@ -36,13 +39,14 @@ class FormItem extends StatefulWidget {
       {Key? key,
       required this.name,
       this.initialValue,
-      this.width = 400,
+      double? width,
       double? height,
       this.color = const Color.fromRGBO(00, 00, 00, 1),
       double? fontSize,
       double? labelWidth,
       required this.label,
       this.labelColor = const Color.fromRGBO(90, 93, 99, 1),
+      double? errorFontSize,
       this.size = WInputSize.small,
       this.type = WInputType.text,
       this.hintText,
@@ -61,19 +65,23 @@ class FormItem extends StatefulWidget {
       this.onTap,
       this.controller})
       : super(key: key) {
-    this.height = height ?? (size == WInputSize.mini ? 60 : 70);
-    this.fontSize = fontSize ?? (size == WInputSize.mini ? 14 : 16);
-    this.labelWidth = labelWidth ?? (size == WInputSize.mini ? 60 : 70);
+    this.height = height?.w ?? (size == WInputSize.mini ? 70.w : 100.w);
+    this.fontSize = fontSize?.sp ?? (size == WInputSize.mini ? 18.sp : 22.sp);
+    this.errorFontSize =
+        errorFontSize?.sp ?? (size == WInputSize.mini ? 14.sp : 18.sp);
+    this.labelWidth = labelWidth?.w ?? (size == WInputSize.mini ? 90.w : 100.w);
+    this.width = width?.w ?? 400.w;
   }
   final String name;
   final dynamic initialValue;
-  final double width;
+  late final double width;
   late final double height;
   final Color color;
   late final double fontSize;
   late final double labelWidth;
   final String label;
   final Color labelColor;
+  late final double errorFontSize;
   final WInputSize size;
   final WInputType type;
   final String? hintText;
@@ -98,9 +106,11 @@ class FormItem extends StatefulWidget {
 
 class _FormItemState extends State<FormItem> {
   List<String> selectedItems = [];
+  double contentPaddingV = 30;
   @override
   void initState() {
     super.initState();
+    contentPaddingV = max((widget.height - widget.fontSize) * 0.7, 30);
     if (widget.initialValue != null) {
       selectedItems = widget.initialValue is String
           ? widget.initialValue!.split(',')
@@ -117,7 +127,7 @@ class _FormItemState extends State<FormItem> {
         height: widget.height,
         child: Stack(children: [
           Positioned(
-              height: widget.height - 24,
+              height: widget.height - contentPaddingV,
               width: widget.labelWidth,
               child: Align(
                   alignment: Alignment.centerLeft,
@@ -126,8 +136,8 @@ class _FormItemState extends State<FormItem> {
                           fontSize: widget.fontSize,
                           color: widget.labelColor)))),
           Positioned(
-              left: widget.labelWidth,
-              width: widget.width - widget.labelWidth - 10,
+              left: widget.labelWidth + 10,
+              width: widget.width - widget.labelWidth - 20,
               child: (widget.type == WInputType.select)
                   ? ((widget.multiple) ? multipleDropdown() : singleDropdown())
                   : widget.type == WInputType.switchs
@@ -148,9 +158,13 @@ class _FormItemState extends State<FormItem> {
               decoration: InputDecoration(
                   isCollapsed: true,
                   contentPadding: EdgeInsets.symmetric(
-                      vertical: (widget.height - widget.fontSize - 24) / 2),
+                      vertical:
+                          (widget.height - widget.fontSize - contentPaddingV) /
+                              2),
                   hintText: widget.hintText ?? '请选择 ${widget.label}',
-                  border: widget.border),
+                  border: widget.border,
+                  errorStyle:
+                      TextStyle(height: 1, fontSize: widget.errorFontSize)),
               items: widget.dicData!
                   .map((map) => DropdownMenuItem<String>(
                       value: map['value'],
@@ -165,7 +179,6 @@ class _FormItemState extends State<FormItem> {
                               field.didChange(selectedItems);
                               widget.onChanged!(selectedItems);
                               setState(() {});
-                              //This rebuilds the dropdownMenu Widget to update the check mark
                               menuSetState(() {});
                             },
                             child: Container(
@@ -204,11 +217,12 @@ class _FormItemState extends State<FormItem> {
                   elevation: 3,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(6)))),
-              iconStyleData: const IconStyleData(
-                  icon: Icon(Icons.keyboard_arrow_down, color: Colors.black45),
-                  iconSize: 24,
-                  openMenuIcon:
-                      Icon(Icons.keyboard_arrow_up, color: Colors.black45)));
+              iconStyleData: IconStyleData(
+                  icon: const Icon(Icons.keyboard_arrow_down,
+                      color: Colors.black45),
+                  iconSize: 24.sp,
+                  openMenuIcon: const Icon(Icons.keyboard_arrow_up,
+                      color: Colors.black45)));
         },
         name: widget.name);
   }
@@ -222,9 +236,13 @@ class _FormItemState extends State<FormItem> {
               decoration: InputDecoration(
                   isCollapsed: true,
                   contentPadding: EdgeInsets.symmetric(
-                      vertical: (widget.height - widget.fontSize - 24) / 2),
+                      vertical:
+                          (widget.height - widget.fontSize - contentPaddingV) /
+                              2),
                   hintText: widget.hintText ?? '请选择 ${widget.label}',
-                  border: widget.border),
+                  border: widget.border,
+                  errorStyle:
+                      TextStyle(height: 1, fontSize: widget.errorFontSize)),
               items: widget.dicData!
                   .map((map) => DropdownMenuItem<String>(
                       value: map['value'], child: Text(map['label'])))
@@ -239,11 +257,12 @@ class _FormItemState extends State<FormItem> {
                   elevation: 3,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(6)))),
-              iconStyleData: const IconStyleData(
-                  icon: Icon(Icons.keyboard_arrow_down, color: Colors.black45),
-                  iconSize: 24,
-                  openMenuIcon:
-                      Icon(Icons.keyboard_arrow_up, color: Colors.black45)));
+              iconStyleData: IconStyleData(
+                  icon: const Icon(Icons.keyboard_arrow_down,
+                      color: Colors.black45),
+                  iconSize: 24.sp,
+                  openMenuIcon: const Icon(Icons.keyboard_arrow_up,
+                      color: Colors.black45)));
         },
         name: widget.name);
   }
@@ -256,7 +275,7 @@ class _FormItemState extends State<FormItem> {
         keyboardType: widget.type == WInputType.number
             ? TextInputType.numberWithOptions(
                 decimal: widget.precision! >= 1 ? true : false)
-            : TextInputType.none,
+            : TextInputType.text,
         inputFormatters: widget.type == WInputType.number
             ? [
                 FilteringTextInputFormatter.allow(RegExp(widget.precision! >= 1
@@ -270,7 +289,8 @@ class _FormItemState extends State<FormItem> {
         decoration: InputDecoration(
             isCollapsed: true,
             contentPadding: EdgeInsets.symmetric(
-                vertical: (widget.height - widget.fontSize - 24) / 2,
+                vertical:
+                    (widget.height - widget.fontSize - contentPaddingV) / 2,
                 horizontal: 16),
             hintText: widget.hintText ??
                 (widget.type == WInputType.text ||
@@ -279,7 +299,8 @@ class _FormItemState extends State<FormItem> {
                     : '请选择${widget.label}'),
             // suffixIcon: suffixIconType[widget.type],
             prefixIcon: prefixIconType[widget.type],
-            border: widget.border),
+            border: widget.border,
+            errorStyle: TextStyle(height: 1, fontSize: widget.errorFontSize)),
         initialValue: widget.initialValue,
         validator: widget.validator,
         onTap: widget.onTap,
@@ -298,7 +319,10 @@ class _FormItemState extends State<FormItem> {
         activeColor: widget.activeColor,
         options: widget.dicData!
             .map((e) => FormBuilderFieldOption(
-                value: e['value'], child: Text(e['label'])))
+                value: e['value'],
+                child: Text(e['label'],
+                    style: TextStyle(
+                        fontSize: widget.fontSize, color: widget.color))))
             .toList(),
         onChanged: widget.onChanged,
         valueTransformer: widget.valueTransformer);
@@ -306,16 +330,19 @@ class _FormItemState extends State<FormItem> {
 
   Widget switchForm() {
     return SizedBox(
-        height: widget.height - 36,
-        child: FormBuilderSwitch(
-            name: widget.name,
-            decoration: InputDecoration(border: widget.border),
-            valueTransformer: widget.valueTransformer,
-            // initialValue: widget.initialValue ?? false,
-            activeColor: widget.activeColor,
-            inactiveThumbColor: widget.inactiveThumbColor,
-            onChanged: widget.onChanged,
-            controlAffinity: ListTileControlAffinity.leading,
-            title: const Text('')));
+        height: widget.height - contentPaddingV,
+        child: Align(
+            alignment: Alignment.centerLeft,
+            child: FormBuilderSwitch(
+                name: widget.name,
+                decoration:
+                    InputDecoration(isCollapsed: true, border: widget.border),
+                valueTransformer: widget.valueTransformer,
+                // initialValue: widget.initialValue ?? false,
+                activeColor: widget.activeColor,
+                inactiveThumbColor: widget.inactiveThumbColor,
+                onChanged: widget.onChanged,
+                controlAffinity: ListTileControlAffinity.leading,
+                title: const Text(''))));
   }
 }

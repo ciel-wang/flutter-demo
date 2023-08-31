@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_demo/utils/shared_data.dart';
 
 class HttpUtil {
   static HttpUtil instance = HttpUtil();
@@ -12,9 +13,14 @@ class HttpUtil {
    * config it and create
    */
   HttpUtil() {
+    String serverIp = SharedData.getString(SharedKey.serverIp) ?? '';
+    String port = SharedData.getString(SharedKey.port) ?? '';
+    String token = SharedData.getString(SharedKey.token) ?? '';
+    String devSn = SharedData.getString(SharedKey.devSn) ?? '90E868344A9D';
+
     //BaseOptions、Options、RequestOptions 都可以配置参数，优先级别依次递增，且可以根据优先级别覆盖参数
     options = BaseOptions(
-      baseUrl: 'http://192.168.3.221:8093/fk',
+      baseUrl: 'http://$serverIp:$port/fk',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 5),
       //请求的Content-Type，默认值是"application/json; charset=utf-8",Headers.formUrlEncodedContentType会自动编码请求体.
@@ -30,8 +36,8 @@ class HttpUtil {
     /// 如果你想终止请求并触发一个错误，你可以使用 `handler.reject(error)`。
     dio.interceptors.add(InterceptorsWrapper(
         onRequest: (RequestOptions options, RequestInterceptorHandler handler) {
-      options.headers['deviceCode'] = '90E868344A9D';
-      // options.headers['token'] = token;
+      options.headers['deviceCode'] = devSn;
+      options.headers['token'] = token;
       return handler.next(options); //continue
     }, onResponse: (Response response, ResponseInterceptorHandler handler) {
       return handler.next(response); // continue
