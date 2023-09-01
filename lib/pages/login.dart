@@ -7,6 +7,7 @@ import '../components/custom_background.dart';
 import '../components/head.dart';
 import '../components/form_item.dart' as my;
 import '../components/custom_btn.dart';
+import '../utils/deviceinfo_fun.dart';
 
 // import '../utils/http.dart';
 class LoginPage extends StatefulWidget {
@@ -36,6 +37,8 @@ class _LoginPageState extends State<LoginPage> {
     'enableFace': SharedData.getBool(SharedKey.enableFace) ?? false,
     'enableFaceVerify': SharedData.getBool(SharedKey.enableFaceVerify) ?? false
   };
+  late Future<Map<String, dynamic>> _deviceData;
+
   @override
   void initState() {
     super.initState();
@@ -44,6 +47,8 @@ class _LoginPageState extends State<LoginPage> {
       form['passWord'] = SharedData.getString(SharedKey.passWord);
       form['isRememb'] = [true];
     }
+    _deviceData = DeviceinfoFun.initDevInfo();
+    debugPrint(_deviceData.toString());
   }
 
   void loginSubmit() async {
